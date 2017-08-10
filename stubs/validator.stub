@@ -1,0 +1,14 @@
+<?php
+
+namespace {{validatorInterfaceNamespace}}\src;
+
+use {{validatorInterfaceNamespace}}\{{validatorInterface}};
+use LOOP\ValidationService\src\LaravelValidator;
+
+/**
+ * Class {{validatorClass}}
+ * @package {{validatorInterfaceNamespace}}\src
+ */
+class {{validatorClass}} extends LaravelValidator implements {{validatorInterface}}
+{
+}

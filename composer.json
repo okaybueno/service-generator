@@ -1,0 +1,19 @@
+{
+    "name": "okaybueno/service-generator",
+    "description": "A package that provides generators for applications that divide its functionality in n-tiers grouped by services.",
+    "authors": [
+        {
+            "name": "Jesús Espejo",
+            "email": "jesus@okaybueno.com",
+            "homepage": "http://www.okaybueno.com",
+            "role": "Tech Strategy"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "OkayBueno\\ServiceGenerator\\": ""
+        }
+    }
+}

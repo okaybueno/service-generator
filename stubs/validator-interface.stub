@@ -1,0 +1,14 @@
+<?php
+
+namespace {{validatorInterfaceNamespace}};
+
+use LOOP\ValidationService\ValidatorInterface;
+
+/**
+ * Interface {{validatorInterface}}
+ * @package {{validatorInterfaceNamespace}}
+ */
+interface {{validatorInterface}} extends ValidatorInterface
+{
+
+}

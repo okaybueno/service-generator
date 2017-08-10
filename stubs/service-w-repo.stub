@@ -1,0 +1,25 @@
+<?php
+
+namespace {{serviceInterfaceNamespace}}\src;
+
+use {{serviceInterfaceNamespace}}\{{serviceInterfaceName}};
+use {{repositoryInterfaceNamespace}}\{{repositoryInterfaceName}};
+
+/**
+ * Class {{serviceClassName}}
+ * @package {{serviceInterfaceNamespace}}\src
+ */
+class {{serviceClassName}} implements {{serviceInterfaceName}}
+{
+    protected ${{repositoryName}};
+
+    /**
+     * @param {{repositoryInterfaceName}} ${{repositoryName}}
+     */
+    public function __construct(
+        {{repositoryInterfaceName}} ${{repositoryName}}
+    )
+    {
+        $this->{{repositoryName}} = ${{repositoryName}};
+    }
+}

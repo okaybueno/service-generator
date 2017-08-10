@@ -1,0 +1,14 @@
+<?php
+
+namespace {{serviceInterfaceNamespace}}\src;
+
+use {{serviceInterfaceNamespace}}\{{serviceInterfaceName}};
+
+/**
+ * Class {{serviceClassName}}
+ * @package {{serviceInterfaceNamespace}}\src
+ */
+class {{serviceClassName}} implements {{serviceInterfaceName}}
+{
+
+}

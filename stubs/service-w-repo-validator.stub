@@ -1,0 +1,30 @@
+<?php
+
+namespace {{serviceInterfaceNamespace}}\src;
+
+use {{serviceInterfaceNamespace}}\{{serviceInterfaceName}};
+use {{repositoryInterfaceNamespace}}\{{repositoryInterfaceName}};
+use {{validatorInterfaceNamespace}}\{{validatorInterface}};
+
+/**
+ * Class {{serviceClassName}}
+ * @package {{serviceInterfaceNamespace}}\src
+ */
+class {{serviceClassName}} implements {{serviceInterfaceName}}
+{
+    protected ${{repositoryName}};
+    protected ${{validatorName}};
+
+    /**
+     * @param {{repositoryInterfaceName}} ${{repositoryName}}
+     * @param {{validatorInterface}} ${{validatorName}}
+     */
+    public function __construct(
+        {{repositoryInterfaceName}} ${{repositoryName}},
+        {{validatorInterface}} ${{validatorName}}
+    )
+    {
+        $this->{{repositoryName}} = ${{repositoryName}};
+        $this->{{validatorName}} = ${{validatorName}};
+    }
+}

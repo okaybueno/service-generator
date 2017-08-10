@@ -1,0 +1,33 @@
+<?php
+
+namespace {{serviceInterfaceNamespace}};
+
+use Illuminate\Support\ServiceProvider;
+
+/**
+ * Class {{serviceProviderClassName}}
+ * @package {{serviceInterfaceNamespace}}
+ */
+class {{serviceProviderClassName}} extends ServiceProvider
+{
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        // Services.
+        $this->app->singleton( '{{serviceInterfaceNamespace}}\{{serviceInterfaceName}}', function ( $app )
+        {
+            return $app->make( '{{serviceInterfaceNamespace}}\src\{{serviceClassName}}' );
+        });
+
+        // Validators.
+        $this->app->bind( '{{validatorInterfaceNamespace}}\{{validatorInterface}}', function ( $app )
+        {
+            return $app->make('{{validatorInterfaceNamespace}}\src\{{validatorClass}}');
+        });
+    }
+}

@@ -1,0 +1,12 @@
+<?php
+
+namespace {{serviceInterfaceNamespace}};
+
+/**
+ * Interface {{serviceInterfaceName}}
+ * @package {{serviceInterfaceNamespace}}
+ */
+interface {{serviceInterfaceName}}
+{
+
+}
