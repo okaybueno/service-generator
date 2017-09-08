@@ -10,7 +10,11 @@ return [
     | Base namespace for the services created.
     |
     */
-    'namespace' => 'MyApp\Services',
+    'groups' => [
+        'MyApp\Services\Frontend' => app_path('MyApp/Services/Frontend'),
+        'MyApp\Services\Backend' => app_path('MyApp/Services/Backend'),
+        'MyApp\Services\Shared' => app_path('MyApp/Services/Shared'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

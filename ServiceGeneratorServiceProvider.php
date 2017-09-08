@@ -4,12 +4,11 @@ namespace OkayBueno\ServiceGenerator;
 
 use Illuminate\Support\ServiceProvider;
 
-
 /**
- * Class ServiceGenerator
+ * Class ServiceGeneratorServiceProvider
  * @package OkayBueno\ServiceGenerator
  */
-class ServiceGenerator extends ServiceProvider
+class ServiceGeneratorServiceProvider extends ServiceProvider
 {
 
     private $configPath = '/config/service-generator.php';

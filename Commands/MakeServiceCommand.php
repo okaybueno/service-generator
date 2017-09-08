@@ -12,10 +12,25 @@ use Illuminate\Filesystem\Filesystem;
 class MakeServiceCommand extends Command
 {
 
-    protected $signature = 'make:service {service-group}';
+    protected $signature = 'make:service {service}';
     protected $description = 'Interactively create a new service.';
+
     protected $filesystem;
-    private $composer;
+    protected $composer;
+
+    protected $serviceGroup;
+    protected $serviceBasePath;
+    protected $serviceNamespace;
+    protected $serviceInterfaceName;
+    protected $serviceClassPath;
+    protected $serviceClassName;
+    protected $validatorBasePath;
+    protected $validatorInterfaceNamespace;
+    protected $validatorInterfaceName;
+    protected $validatorClassPath;
+    protected $validatorClassName;
+    protected $repositoryNamespace;
+    protected $repositoryName;
 
 
     /**
@@ -37,52 +52,83 @@ class MakeServiceCommand extends Command
      */
     public function fire()
     {
-        $serviceGroup = $this->argument('service-group');
+        $service = $this->argument('service');
 
-        $serviceName = $this->ask('Please introduce the name of the service');
-        $injectRepo = $this->confirm('Do you want to inject a repository for this validator?', true);
-        $createAndInjectValidator = $this->confirm('Do you want to create a validator for this service?', true);
+        if ( $service )
+        {
+            $groups = config('service-generator.groups');
 
-        if ( $injectRepo ) $repo = $this->ask('Please specify the model for which you want to inject the repository');
-        else $repo = FALSE;
+            $groupKeys = array_keys( $groups );
 
-        // Create validator?
-        if ( $createAndInjectValidator ) $validator = $this->createValidatorWithInterface( $serviceGroup, $serviceName );
-        else $validator = FALSE;
+            $group = $this->choice('For which group do you want to create the service?', $groupKeys );
 
-        $this->createServiceWithInterface( $serviceGroup, $serviceName, $repo, $validator );
+            $repository = $this->confirm('Do you want to inject a repository for this validator?', false);
+            $validator = $this->confirm('Do you want to create a validator for this service?', true);
 
-        $this->createServiceProvider( $serviceGroup, $serviceName, $validator );
+            if ( $repository ) $repository = $this->ask('Please specify the full class name for the repository that you want to inject');
+            else $repository = FALSE;
+
+            $this->populateValuesForProperties( $service, $group, $repository, $validator );
+        } else
+        {
+            $this->error('Please introduce a name for this service.');
+        }
     }
 
     /**
-     * @param $serviceGroup
-     * @param $serviceName
-     * @return bool
+     * @param $service
+     * @param $group
+     * @param $repository
+     * @param $validator
      */
-    protected function createValidatorWithInterface( $serviceGroup, $serviceName )
+    protected function populateValuesForProperties( $service, $group, $repository, $validator )
     {
-        $validatorInterfaceNamespace = $this->getBaseValidatorNamespace( $serviceGroup );
-        $validatorInterface = $this->getValidatorInterfaceName( $serviceName );
+        $groups = config('service-generator.groups');
 
-        $interfaceFilePath = config( 'service-generator.path' ).'/'.$serviceGroup.'/Validation/'.$validatorInterface.'.php';
+        $this->serviceGroup = $group;
+        $this->serviceBasePath = $groups[ $group ];
+        $this->serviceNamespace = $group;
+        $this->serviceInterfaceName = $service.'Interface';
+        $this->serviceClassPath = rtrim($this->serviceBasePath, '/').'/src';
+        $this->serviceClassName = $service;
 
-        if ( !$this->filesystem->exists( $interfaceFilePath ) )
+        if ( $validator )
+        {
+            $this->validatorBasePath = rtrim($this->serviceBasePath, '/').'/Validation';
+            $this->validatorInterfaceNamespace = $this->serviceNamespace.'/Validation';
+            $this->validatorInterfaceName = $service.'ValidatorInterface';
+            $this->validatorClassName = $service.'LaravelValidator';
+        }
+
+        if ( $repository )
+        {
+            $rplc = str_replace( '\\', '/', $repository );
+            $this->repositoryNamespace = str_replace( '//', '/', pathinfo( $rplc, PATHINFO_DIRNAME ) );
+            $this->repositoryName = pathinfo( $rplc, PATHINFO_FILENAME );
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function createValidatorWithInterface()
+    {
+        if ( !$this->filesystem->exists( $this->validatorBasePath.'/'.$this->validatorInterfaceName ) )
         {
             // Read the stub and replace
-            $this->makeDirectory( dirname( $interfaceFilePath ) );
-            $this->filesystem->put( $interfaceFilePath, $this->compileValidatorInterface( $validatorInterfaceNamespace, $validatorInterface ) );
-            $this->info("Validator interface created successfully for '$serviceName'.");
+            $this->makeDirectory( $this->validatorBasePath );
+            $this->filesystem->put( $this->validatorBasePath.'/'.$this->validatorInterfaceName.'.php', $this->compileValidatorInterface( ) );
+            $this->info("Validator interface created successfully for '$this->serviceClassName'.");
             $this->composer->dumpAutoloads();
         } else
         {
-            $this->error("The interface '$validatorInterface' already exists, so it was skipped.");
+            $this->error("The interface '$this->validatorInterfaceName' already exists, so it was skipped.");
         }
 
         // Now create the class.
         $validatorClassName = $this->getValidatorClassName( $serviceName );
 
-        $classFilePath = config( 'service-generator.path' ).'/'.$serviceGroup.'/Validation/src/'.$validatorClassName.'.php';
+        $classFilePath = config( 'service-generator.path' ).'/'.$service.'/Validation/src/'.$validatorClassName.'.php';
 
         if ( !$this->filesystem->exists( $classFilePath ) )
         {
@@ -99,17 +145,17 @@ class MakeServiceCommand extends Command
     }
 
     /**
-     * @param $serviceGroup
+     * @param $service
      * @param $serviceName
      * @param null $withRepository
      * @param null $withValidator
      */
-    protected function createServiceWithInterface( $serviceGroup, $serviceName, $withRepository = NULL, $withValidator = NULL )
+    protected function createServiceWithInterface( $service, $serviceName, $withRepository = NULL, $withValidator = NULL )
     {
-        $serviceInterfaceNamespace = $this->getBaseServiceNamespace( $serviceGroup );
+        $serviceInterfaceNamespace = $this->getBaseServiceNamespace( $service );
         $serviceInterface = $this->getServiceInterfaceName( $serviceName );
 
-        $interfaceFilePath = config( 'service-generator.path' ).'/'.$serviceGroup.'/'.$serviceInterface.'.php';
+        $interfaceFilePath = config( 'service-generator.path' ).'/'.$service.'/'.$serviceInterface.'.php';
 
         if ( !$this->filesystem->exists( $interfaceFilePath ) )
         {
@@ -125,12 +171,12 @@ class MakeServiceCommand extends Command
 
         $serviceClassName = $this->getServiceClassName( $serviceName );
 
-        $classFilePath = config( 'service-generator.path' ).'/'.$serviceGroup.'/src/'.$serviceClassName.'.php';
+        $classFilePath = config( 'service-generator.path' ).'/'.$service.'/src/'.$serviceClassName.'.php';
 
         if ( !$this->filesystem->exists( $classFilePath ) )
         {
             $this->makeDirectory( dirname( $classFilePath ) );
-            $this->filesystem->put( $classFilePath, $this->compileService( $serviceGroup, $serviceName, $withRepository, $withValidator ) );
+            $this->filesystem->put( $classFilePath, $this->compileService( $service, $serviceName, $withRepository, $withValidator ) );
             $this->info("Service created successfully for '$serviceName'.");
             $this->composer->dumpAutoloads();
         } else
@@ -140,21 +186,21 @@ class MakeServiceCommand extends Command
     }
 
     /**
-     * @param $serviceGroup
+     * @param $service
      * @param $serviceName
      * @param null $withValidator
      */
-    protected function createServiceProvider( $serviceGroup, $serviceName, $withValidator = NULL )
+    protected function createServiceProvider( $service, $serviceName, $withValidator = NULL )
     {
-        $serviceProviderClassName = $this->getServiceProviderName( $serviceGroup );
+        $serviceProviderClassName = $this->getServiceProviderName( $service );
 
-        $classFilePath = config( 'service-generator.path' ).'/'.$serviceGroup.'/'.$serviceProviderClassName.'.php';
+        $classFilePath = config( 'service-generator.path' ).'/'.$service.'/'.$serviceProviderClassName.'.php';
 
         if ( !$this->filesystem->exists( $classFilePath ) )
         {
             $this->makeDirectory( dirname( $classFilePath ) );
-            $this->filesystem->put( $classFilePath, $this->compileServiceProvider( $serviceGroup, $serviceName, $withValidator ) );
-            $this->info("Service provider created successfully for '$serviceGroup'.");
+            $this->filesystem->put( $classFilePath, $this->compileServiceProvider( $service, $serviceName, $withValidator ) );
+            $this->info("Service provider created successfully for '$service'.");
             $this->composer->dumpAutoloads();
         } else
         {
@@ -178,13 +224,13 @@ class MakeServiceCommand extends Command
     }
 
     /**
-     * @param $serviceGroup
+     * @param $service
      * @param $serviceName
      * @param $withValidator
      * @param $withRepository
      * @return mixed
      */
-    protected function compileService( $serviceGroup, $serviceName, $withRepository, $withValidator )
+    protected function compileService( $service, $serviceName, $withRepository, $withValidator )
     {
         if ( $withRepository && !$withValidator )
         {
@@ -197,7 +243,7 @@ class MakeServiceCommand extends Command
             $stub = $this->filesystem->get(__DIR__ . '/../stubs/service.stub');
         }
 
-        $serviceInterfaceNamespace = $this->getBaseServiceNamespace( $serviceGroup );
+        $serviceInterfaceNamespace = $this->getBaseServiceNamespace( $service );
         $serviceInterfaceName = $this->getServiceInterfaceName( $serviceName );
         $serviceClassName = $this->getServiceClassName( $serviceName );
 
@@ -220,7 +266,7 @@ class MakeServiceCommand extends Command
         if ( $withValidator )
         {
             // Load the values for repository.
-            $validatorInterfaceNamespace = $this->getBaseValidatorNamespace( $serviceGroup );
+            $validatorInterfaceNamespace = $this->getBaseValidatorNamespace( $service );
             $validatorInterface = $withValidator.'ValidatorInterface';
             $validatorName = strtolower( $withValidator ).'Validator';
 
@@ -233,12 +279,12 @@ class MakeServiceCommand extends Command
     }
 
     /**
-     * @param $serviceGroup
+     * @param $service
      * @param $serviceName
      * @param $withValidator
      * @return mixed
      */
-    protected function compileServiceProvider( $serviceGroup, $serviceName, $withValidator )
+    protected function compileServiceProvider( $service, $serviceName, $withValidator )
     {
         if ( $withValidator )
         {
@@ -248,8 +294,8 @@ class MakeServiceCommand extends Command
             $stub = $this->filesystem->get(__DIR__ . '/../stubs/service-provider.stub');
         }
 
-        $serviceProviderClassName = $this->getServiceProviderName( $serviceGroup );
-        $serviceInterfaceNamespace = $this->getBaseServiceNamespace( $serviceGroup );
+        $serviceProviderClassName = $this->getServiceProviderName( $service );
+        $serviceInterfaceNamespace = $this->getBaseServiceNamespace( $service );
         $serviceInterfaceName = $this->getServiceInterfaceName( $serviceName );
         $serviceClassName = $this->getServiceClassName( $serviceName );
 
@@ -261,7 +307,7 @@ class MakeServiceCommand extends Command
         if ( $withValidator )
         {
             // Load the values for repository.
-            $validatorInterfaceNamespace = $this->getBaseValidatorNamespace( $serviceGroup );
+            $validatorInterfaceNamespace = $this->getBaseValidatorNamespace( $service );
             $validatorInterface = $withValidator.'ValidatorInterface';
             $validatorName = $this->getValidatorClassName( $serviceName );
 
@@ -273,21 +319,15 @@ class MakeServiceCommand extends Command
         return $stub;
     }
 
-
-
-
-
     /**
-     * @param $validatorInterfaceNamespace
-     * @param $validatorInterface
-     * @return mixed
+     * @return mixed|string
      */
-    protected function compileValidatorInterface( $validatorInterfaceNamespace, $validatorInterface )
+    protected function compileValidatorInterface()
     {
         $stub = $this->filesystem->get(__DIR__ . '/../stubs/validator-interface.stub');
 
-        $stub = str_replace('{{validatorInterfaceNamespace}}', $validatorInterfaceNamespace, $stub);
-        $stub = str_replace('{{validatorInterface}}', $validatorInterface, $stub);
+        $stub = str_replace('{{validatorInterfaceNamespace}}', $this->validatorInterfaceNamespace, $stub);
+        $stub = str_replace('{{validatorInterface}}', $this->validatorInterfaceName, $stub);
 
         return $stub;
     }
@@ -322,23 +362,23 @@ class MakeServiceCommand extends Command
     }
 
     /**
-     * @param $serviceGroup
+     * @param $service
      * @return string
      */
-    protected function getBaseServiceNamespace( $serviceGroup )
+    protected function getBaseServiceNamespace( $service )
     {
         $baseNamespace = rtrim( config( 'service-generator.namespace' ), '\\' ) . '\\';
 
-        return $baseNamespace.$serviceGroup;
+        return $baseNamespace.$service;
     }
 
     /**
-     * @param $serviceGroup
+     * @param $service
      * @return string
      */
-    protected function getBaseValidatorNamespace( $serviceGroup )
+    protected function getBaseValidatorNamespace( $service )
     {
-        $base = $this->getBaseServiceNamespace( $serviceGroup );
+        $base = $this->getBaseServiceNamespace( $service );
 
         return $base.'\Validation';
     }
@@ -380,11 +420,11 @@ class MakeServiceCommand extends Command
     }
 
     /**
-     * @param $serviceGroup
+     * @param $service
      * @return string
      */
-    public function getServiceProviderName( $serviceGroup )
+    public function getServiceProviderName( $service )
     {
-        return $serviceGroup.'ServiceProvider';
+        return $service.'ServiceProvider';
     }
 }
