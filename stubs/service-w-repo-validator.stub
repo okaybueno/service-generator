@@ -3,7 +3,7 @@
 namespace {{serviceInterfaceNamespace}}\src;
 
 use {{serviceInterfaceNamespace}}\{{serviceInterfaceName}};
-use {{repositoryInterfaceNamespace}}\{{repositoryInterfaceName}};
+use {{repositoryInterfaceFullName}};
 use {{validatorInterfaceNamespace}}\{{validatorInterface}};
 
 /**

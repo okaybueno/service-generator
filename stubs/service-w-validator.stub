@@ -3,7 +3,7 @@
 namespace {{serviceInterfaceNamespace}}\src;
 
 use {{serviceInterfaceNamespace}}\{{serviceInterfaceName}};
-use {{repositoryInterfaceFullName}};
+use {{validatorInterfaceNamespace}}\{{validatorInterface}};
 
 /**
  * Class {{serviceClassName}}
@@ -11,15 +11,15 @@ use {{repositoryInterfaceFullName}};
  */
 class {{serviceClassName}} implements {{serviceInterfaceName}}
 {
-    protected ${{repositoryName}};
+    protected ${{validatorName}};
 
     /**
-     * @param {{repositoryInterfaceName}} ${{repositoryName}}
+     * @param {{validatorInterface}} ${{validatorName}}
      */
     public function __construct(
-        {{repositoryInterfaceName}} ${{repositoryName}}
+        {{validatorInterface}} ${{validatorName}}
     )
     {
-        $this->{{repositoryName}} = ${{repositoryName}};
+        $this->{{validatorName}} = ${{validatorName}};
     }
 }

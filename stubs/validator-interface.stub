@@ -2,7 +2,7 @@
 
 namespace {{validatorInterfaceNamespace}};
 
-use LOOP\ValidationService\ValidatorInterface;
+use OkayBueno\Validation\ValidatorInterface;
 
 /**
  * Interface {{validatorInterface}}

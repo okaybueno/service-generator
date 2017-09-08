@@ -3,7 +3,7 @@
 namespace {{validatorInterfaceNamespace}}\src;
 
 use {{validatorInterfaceNamespace}}\{{validatorInterface}};
-use LOOP\ValidationService\src\LaravelValidator;
+use OkayBueno\Validation\src\LaravelValidator;
 
 /**
  * Class {{validatorClass}}
