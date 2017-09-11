@@ -4,37 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Services namespace
+    | Services namespaces and locations
     |--------------------------------------------------------------------------
     |
-    | Base namespace for the services created.
+    | We might want to divide the services used in our app in different folders
+    | and namespaces. For instance, you might have services that are used only
+    | by your backend app, while other services might be shared between your
+    | backend app and your frontend web app.
+    |
+    | Please specify here the different namespaces and locations here.
     |
     */
     'groups' => [
-        'MyApp\Services\Frontend' => app_path('MyApp/Services/Frontend'),
-        'MyApp\Services\Backend' => app_path('MyApp/Services/Backend'),
-        'MyApp\Services\Shared' => app_path('MyApp/Services/Shared'),
+        'App\MyApp\Services\Frontend' => app_path('MyApp/Services/Frontend'),
+        'App\MyApp\Services\Backend' => app_path('MyApp/Services/Backend'),
+        'App\MyApp\Services\Shared' => app_path('MyApp/Services/Shared'),
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Path
-    |--------------------------------------------------------------------------
-    |
-    | Your services need to live somewhere. Please specify here where they
-    | live.
-    |
-    */
-    'path' => app_path('MyApp/Services'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Repositories Namespace
-    |--------------------------------------------------------------------------
-    |
-    | If injecting repos, please speficy namespace here.
-    |
-    */
-    'repositories_namespace' => 'MyApp\Repositories'
-
 ];
