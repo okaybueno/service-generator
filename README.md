@@ -1,6 +1,6 @@
 # Service Generator
 
-A package to generate services and validators for your Laravel apps.
+A package to automatically generate services and validators for your Laravel apps. 
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/okaybueno/service-generator.svg?style=flat-square)](https://packagist.org/packages/okaybueno/service-generator)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
