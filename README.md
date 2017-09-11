@@ -98,7 +98,7 @@ So what if we automate that, so we can spend more time doing cool things (like a
 Just execute `php artisan make:service {service}`, where `{service}` is just the name of the group-service that you want 
 to create (for example, `php artisan make:service Users`) and then just follow the steps on the screen :).
 
-#### 1st step: Selecting the group
+##### 1st step: Selecting the group
 
 As you have seen, the `config/service-generator.php` contains just one parameter to configure: namespace and location
 of all the different folders that can keep services. The first step on the interactive prompt is to select the group
@@ -113,7 +113,7 @@ For which group do you want to create the service?:
  > 
 ```
 
-#### 2nd step: A) Injecting repository (optional)
+##### 2nd step: A) Injecting repository (optional)
 
 Pretty often our services will be using more or more than one repository, so you can inject it at this point.
 The console will ask you if you want to inject a repository. If you select yes, then you'll be prompted to
@@ -125,7 +125,7 @@ introduce the full class name of the repository (or interface) that you want to 
  >
 ```
 
-#### 2nd step: B) Selecting repository (optional)
+##### 2nd step: B) Selecting repository (optional)
 
 If you selected "yes" to the injection of a repository, then you have to introduce the full class name of the repository
 that you want to inject. Our advices is to inject a repository and bind the interface to a class, resolved by the IoC 
@@ -137,7 +137,7 @@ container that Laravel offers:
  >
 ```
 
-#### 3rd step: Creating and injecting a validator (and interface)
+##### 3rd step: Creating and injecting a validator and its interface (optional)
 
 Sometimes you may also need to validate the data inside the repository, so in these cases you might want to create
 and inject a validator. If you select "yes" (selected by default) then a validator interface and its implementation in
@@ -149,7 +149,7 @@ services will be created:
  >
 ```
 
-#### 4th step: Wiring the service provider up
+##### 4th step: Wiring the service provider up 
 
 A service provider will be created as well, so the last step is to wire that service provider to our application. To do,
 just add a normal service provider the same way that you would add it if you were creating this services manually :). If 
