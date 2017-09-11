@@ -1,6 +1,6 @@
 {
     "name": "okaybueno/service-generator",
-    "description": "A package that provides generators for monolithic applications that divide its functionality in n-tiers grouped by services.",
+    "description": "A package to automatically generate services and validators for your Laravel apps.",
     "keywords": ["services", "php", "laravel"],
     "license": "MIT",
     "authors": [
