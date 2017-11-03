@@ -12,7 +12,7 @@ use Illuminate\Filesystem\Filesystem;
 class MakeServiceCommand extends Command
 {
 
-    protected $signature = 'make:service {service} {--folder=?}';
+    protected $signature = 'make:service {service} {--folder=}';
     protected $description = 'Interactively create a new service.';
 
     protected $filesystem;
