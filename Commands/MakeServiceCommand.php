@@ -12,13 +12,14 @@ use Illuminate\Filesystem\Filesystem;
 class MakeServiceCommand extends Command
 {
 
-    protected $signature = 'make:service {service}';
+    protected $signature = 'make:service {service} {--folder=?}';
     protected $description = 'Interactively create a new service.';
 
     protected $filesystem;
     protected $composer;
 
     protected $serviceGroup;
+    protected $serviceFolder;
     protected $serviceBasePath;
     protected $serviceNamespace;
     protected $serviceInterfaceName;
@@ -50,9 +51,10 @@ class MakeServiceCommand extends Command
      *
      * @return mixed
      */
-    public function fire()
+    public function handle()
     {
         $service = $this->argument('service');
+        $folder = $this->option('folder');
 
         if ( $service )
         {
@@ -69,7 +71,7 @@ class MakeServiceCommand extends Command
 
             $validator = $this->confirm('Do you want to create and inject a validator for this service?', true);
 
-            $this->populateValuesForProperties( $service, $group, $repository, $validator );
+            $this->populateValuesForProperties( $service, $folder, $group, $repository, $validator );
 
             // Create validator, if it proceeds.
             if ( $validator ) $this->createValidatorWithInterface();
@@ -92,15 +94,16 @@ class MakeServiceCommand extends Command
      * @param $repository
      * @param $validator
      */
-    protected function populateValuesForProperties( $service, $group, $repository, $validator )
+    protected function populateValuesForProperties( $service, $folder, $group, $repository, $validator )
     {
         $groups = config('service-generator.groups');
 
         $serviceName = $service.'Service';
 
+        $this->serviceFolder = $folder;
         $this->serviceGroup = $group;
-        $this->serviceBasePath = $groups[ $group ].'/'.$service;
-        $this->serviceNamespace = $group.'\\'.$service;
+        $this->serviceBasePath = $this->serviceFolder ? $groups[ $group ].'/'.$this->serviceFolder : $groups[ $group ].'/'.$service;
+        $this->serviceNamespace = $this->serviceFolder ? $group.'\\'.$this->serviceFolder : $group.'\\'.$service;
         $this->serviceInterfaceName = $serviceName.'Interface';
         $this->serviceClassPath = rtrim($this->serviceBasePath, '/').'/src';
         $this->serviceClassName = $serviceName;
