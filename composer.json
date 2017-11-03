@@ -15,7 +15,8 @@
         "php": ">=7.0",
         "illuminate/console": "5.*",
         "illuminate/support": "5.*",
-        "illuminate/filesystem": "5.*"
+        "illuminate/filesystem": "5.*",
+        "okaybueno/validation": "1.*"
     },
     "autoload": {
         "psr-4": {
