@@ -1,5 +1,5 @@
 # IMPORTANT ❗
-**This package has been discontinued so it won't receive any other update. If you're using it please consider migrating to another solution – or fork it and depend on your version own package.**
+**This package has been discontinued and it won't receive any other updates. If you're using it please consider migrating to another solution – or fork it and depend on your own version of package.**
 
 --- 
 
